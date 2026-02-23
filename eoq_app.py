@@ -1,60 +1,142 @@
 import streamlit as st
 import numpy as np
-from scipy.stats import norm
 import matplotlib.pyplot as plt
 
-st.title("Supply Chain Analytics Model")
-st.subheader("EOQ with Safety Stock & Reorder Point")
+st.set_page_config(page_title="Inventory Optimization Toolkit", layout="wide")
 
-# --- INPUT SECTION ---
-st.sidebar.header("Input Parameters")
+st.title("📦 Inventory Optimization Toolkit")
+st.markdown("Built for Supply Chain Analytics")
 
-D = st.sidebar.number_input("Annual Demand (D)", value=10000)
-S = st.sidebar.number_input("Ordering Cost per Order (S)", value=500)
-C = st.sidebar.number_input("Unit Cost (C)", value=50)
-h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=20)/100
-lead_time = st.sidebar.number_input("Lead Time (periods)", value=5)
-mean_demand = st.sidebar.number_input("Mean Demand per Period", value=40)
-std_dev = st.sidebar.number_input("Std Dev of Demand per Period", value=10)
-service_level = st.sidebar.slider("Service Level", 0.80, 0.99, 0.95)
+# ---- Z VALUE TABLE ----
+z_table = {
+    0.80: 0.84,
+    0.85: 1.04,
+    0.90: 1.28,
+    0.95: 1.65,
+    0.97: 1.88,
+    0.98: 2.05,
+    0.99: 2.33
+}
 
-# --- CALCULATIONS ---
-H = h_rate * C
-EOQ = np.sqrt((2 * D * S) / H)
-orders_per_year = D / EOQ
-average_inventory = EOQ / 2
+# ---- MODEL SELECTION ----
+model = st.sidebar.selectbox(
+    "Select Inventory Model",
+    ["EOQ (Deterministic)",
+     "EOQ with Safety Stock",
+     "Newsvendor Model"]
+)
 
-Z = norm.ppf(service_level)
-sigma_LT = std_dev * np.sqrt(lead_time)
-safety_stock = Z * sigma_LT
-ROP = (mean_demand * lead_time) + safety_stock
+# ============================================================
+# EOQ MODEL
+# ============================================================
 
-total_cost = (D/EOQ)*S + (EOQ/2)*H
+if model == "EOQ (Deterministic)":
 
-# --- OUTPUT SECTION ---
-st.header("Results")
+    st.header("Economic Order Quantity (EOQ)")
 
-col1, col2 = st.columns(2)
+    D = st.sidebar.number_input("Annual Demand (D)", value=24000)
+    S = st.sidebar.number_input("Ordering Cost per Order (S)", value=1200)
+    C = st.sidebar.number_input("Unit Cost (C)", value=500)
+    h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
 
-col1.metric("EOQ", round(EOQ,2))
-col1.metric("Reorder Point (ROP)", round(ROP,2))
-col1.metric("Safety Stock", round(safety_stock,2))
+    H = h_rate * C
+    EOQ = np.sqrt((2 * D * S) / H)
+    total_cost = (D/EOQ)*S + (EOQ/2)*H
+    orders_per_year = D / EOQ
 
-col2.metric("Total Annual Cost", round(total_cost,2))
-col2.metric("Orders per Year", round(orders_per_year,2))
-col2.metric("Average Inventory", round(average_inventory,2))
+    col1, col2 = st.columns(2)
 
-# --- COST GRAPH ---
-st.subheader("Total Cost Curve")
+    col1.metric("EOQ", round(EOQ,2))
+    col1.metric("Orders per Year", round(orders_per_year,2))
+    col2.metric("Total Annual Cost", round(total_cost,2))
 
-Q = np.linspace(EOQ*0.2, EOQ*2, 100)
-TC = (D/Q)*S + (Q/2)*H
+    st.subheader("Total Cost Curve")
 
-fig, ax = plt.subplots()
-ax.plot(Q, TC)
-ax.axvline(EOQ, linestyle="--")
-ax.set_xlabel("Order Quantity")
-ax.set_ylabel("Total Cost")
-ax.set_title("Total Cost vs Order Quantity")
+    Q = np.linspace(EOQ*0.2, EOQ*2, 100)
+    TC = (D/Q)*S + (Q/2)*H
 
-st.pyplot(fig)
+    fig, ax = plt.subplots()
+    ax.plot(Q, TC)
+    ax.axvline(EOQ, linestyle="--")
+    ax.set_xlabel("Order Quantity")
+    ax.set_ylabel("Total Cost")
+    ax.set_title("Total Cost vs Order Quantity")
+
+    st.pyplot(fig)
+
+# ============================================================
+# EOQ WITH SAFETY STOCK
+# ============================================================
+
+elif model == "EOQ with Safety Stock":
+
+    st.header("EOQ with Safety Stock & Reorder Point")
+
+    D = st.sidebar.number_input("Annual Demand (D)", value=24000)
+    S = st.sidebar.number_input("Ordering Cost per Order (S)", value=1200)
+    C = st.sidebar.number_input("Unit Cost (C)", value=500)
+    h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
+
+    lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
+    mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
+    std_dev = st.sidebar.number_input("Std Dev of Demand per Period", value=120)
+
+    service_level = st.sidebar.selectbox(
+        "Service Level",
+        options=list(z_table.keys()),
+        index=3
+    )
+
+    Z = z_table[service_level]
+
+    H = h_rate * C
+    EOQ = np.sqrt((2 * D * S) / H)
+
+    sigma_LT = std_dev * np.sqrt(lead_time)
+    safety_stock = Z * sigma_LT
+    ROP = (mean_demand * lead_time) + safety_stock
+
+    total_cost = (D/EOQ)*S + (EOQ/2)*H
+
+    col1, col2 = st.columns(2)
+
+    col1.metric("EOQ", round(EOQ,2))
+    col1.metric("Safety Stock", round(safety_stock,2))
+    col1.metric("Reorder Point (ROP)", round(ROP,2))
+
+    col2.metric("Total Annual Cost", round(total_cost,2))
+
+# ============================================================
+# NEWSVENDOR MODEL
+# ============================================================
+
+elif model == "Newsvendor Model":
+
+    st.header("Newsvendor (Single-Period) Model")
+
+    mean_demand = st.sidebar.number_input("Mean Demand", value=1000)
+    std_dev = st.sidebar.number_input("Std Deviation of Demand", value=200)
+    selling_price = st.sidebar.number_input("Selling Price per Unit", value=50)
+    cost_price = st.sidebar.number_input("Cost per Unit", value=30)
+    salvage_value = st.sidebar.number_input("Salvage Value per Unit", value=10)
+
+    Cu = selling_price - cost_price  # Underage cost
+    Co = cost_price - salvage_value  # Overage cost
+
+    critical_ratio = Cu / (Cu + Co)
+
+    # Find closest Z from table
+    closest_service = min(z_table.keys(), key=lambda x: abs(x - critical_ratio))
+    Z = z_table[closest_service]
+
+    optimal_Q = mean_demand + Z * std_dev
+
+    col1, col2 = st.columns(2)
+
+    col1.metric("Critical Ratio", round(critical_ratio,3))
+    col1.metric("Optimal Order Quantity", round(optimal_Q,2))
+
+    col2.metric("Underage Cost (Cu)", round(Cu,2))
+    col2.metric("Overage Cost (Co)", round(Co,2))
+
+    st.markdown(f"Closest Service Level Used: **{closest_service}**")
