@@ -137,7 +137,7 @@ elif model == "EOQ with Stock outk":
 
     H = h_rate * C
 
-    if(g == null)
+    if g == null:
         phi = norm.pdf(z)
         Phi = norm.cdf(z)
         Ez = phi - z * (1 - Phi) 
