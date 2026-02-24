@@ -24,6 +24,7 @@ model = st.sidebar.selectbox(
     "Select Inventory Model",
     ["EOQ (Deterministic)",
      "EOQ with Safety Stock",
+     "EOQ with Stock Out",
      "Newsvendor Model"]
 )
 
@@ -79,7 +80,7 @@ elif model == "EOQ with Safety Stock":
     h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
 
     lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
-    ##mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
+    mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
     std_dev = st.sidebar.number_input("Std Dev of Demand per Period", value=120)
 
     service_level = st.sidebar.selectbox(
@@ -111,7 +112,7 @@ elif model == "EOQ with Safety Stock":
 # EOQ WITH STOCK OUT
 # ============================================================
 
-elif model == "EOQ with Stock outk":
+elif model == "EOQ with Stock Out":
 
     st.header("EOQ with Stock Out")
 
