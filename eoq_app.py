@@ -81,8 +81,8 @@ elif model == "EOQ with Safety Stock":
     h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
 
     lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
-    mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
-    std_dev = st.sidebar.number_input("Std Dev of Demand per Period", value=120)
+    mean_demand = st.sidebar.number_input("Mean Demand per Period  (d)", value=460)
+    std_dev = st.sidebar.number_input("Std Dev of Demand per Period (Std)", value=120)
 
     service_level = st.sidebar.selectbox(
         "Service Level",
@@ -124,7 +124,7 @@ elif model == "EOQ with Stock Out":
     pi = st.sidebar.number_input("Stock Out Cost per cycle (g)", value=250)
 
     lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
-    std_dev = st.sidebar.number_input("Std Dev of Demand", value=120)
+    std_dev = st.sidebar.number_input("Std Dev of Demand (Std)", value=120)
 
     service_level = st.sidebar.selectbox(
         "Service Level",
@@ -212,8 +212,8 @@ elif model == "Newsvendor Model":
 
     st.header("Newsvendor (Single-Period) Model")
 
-    mean_demand = st.sidebar.number_input("Mean Demand", value=1000)
-    std_dev = st.sidebar.number_input("Std Deviation of Demand", value=200)
+    mean_demand = st.sidebar.number_input("Mean Demand (d)", value=1000)
+    std_dev = st.sidebar.number_input("Std Deviation of Demand (Std)", value=200)
     selling_price = st.sidebar.number_input("Selling Price per Unit", value=50)
     cost_price = st.sidebar.number_input("Cost per Unit", value=30)
     salvage_value = st.sidebar.number_input("Salvage Value per Unit", value=10)
