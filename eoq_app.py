@@ -147,12 +147,12 @@ elif model == "EOQ with Stock Out":
    
    
     total_cost = (D/EOQ)*S + (EOQ/2)*H + (D/EOQ)*g*pi
-
+    G = g * pi
     col1, col2 = st.columns(2)
 
     col1.metric("EOQ", round(EOQ,2))
-    ##col1.metric("Safety Stock", round(safety_stock,2))
-    ##col1.metric("Reorder Point (ROP)", round(ROP,2))
+    col1.metric("Shortage per cycle", round(g,2))
+    col1.metric("Shortage Cost per cycle, G", round(G,2))
 
     col2.metric("Total Annual Cost", round(total_cost,2))
 
