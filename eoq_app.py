@@ -188,7 +188,7 @@ elif model == "EOQ with Back Order":
     #Ez = phi - Z * (1 - Phi) 
     #g = sigma_LT * Ez
         
-    EOQ = (np.sqrt((2 * D * S) / H)) * (np.sqrt((H + pi) / H\pi))
+    EOQ = (np.sqrt((2 * D * S) / H)) * (np.sqrt((H + pi) / pi))
     B = EOQ * (H/(H+pi))
     M = EOQ - B
 
