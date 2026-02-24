@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import norm
 
 st.set_page_config(page_title="Inventory Optimization Toolkit", layout="wide")
 
@@ -78,7 +79,7 @@ elif model == "EOQ with Safety Stock":
     h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
 
     lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
-    mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
+    ##mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
     std_dev = st.sidebar.number_input("Std Dev of Demand per Period", value=120)
 
     service_level = st.sidebar.selectbox(
@@ -103,6 +104,55 @@ elif model == "EOQ with Safety Stock":
     col1.metric("EOQ", round(EOQ,2))
     col1.metric("Safety Stock", round(safety_stock,2))
     col1.metric("Reorder Point (ROP)", round(ROP,2))
+
+    col2.metric("Total Annual Cost", round(total_cost,2))
+
+# ============================================================
+# EOQ WITH STOCK OUT
+# ============================================================
+
+ elif model == "EOQ with Stock outk":
+
+    st.header("EOQ with Stock Out")
+
+    D = st.sidebar.number_input("Annual Demand (D)", value=24000)
+    S = st.sidebar.number_input("Ordering Cost per Order (S)", value=1200)
+    C = st.sidebar.number_input("Unit Cost (C)", value=500)
+    h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
+    g = st.sidebar.number_input("Expected Shortage per cycle (g)", value=80)
+    pi = st.sidebar.number_input("Stock Out Cost per cycle (g)", value=250)
+
+    lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
+###########    mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
+    std_dev = st.sidebar.number_input("Std Dev of Demand", value=120)
+
+    service_level = st.sidebar.selectbox(
+        "Service Level",
+        options=list(z_table.keys()),
+        index=3
+    )
+
+    Z = z_table[service_level]
+    sigma_LT = std_dev * np.sqrt(lead_time)
+
+    H = h_rate * C
+
+    if(g == null)
+        phi = norm.pdf(z)
+        Phi = norm.cdf(z)
+        Ez = phi - z * (1 - Phi) 
+        g = sigma_LT * Ez
+        
+    EOQ = np.sqrt((2 * D * (S+g*pi)) / H)
+   
+   
+    total_cost = (D/EOQ)*S + (EOQ/2)*H + (D/EOQ)*g*pi
+
+    col1, col2 = st.columns(2)
+
+    col1.metric("EOQ", round(EOQ,2))
+    ##col1.metric("Safety Stock", round(safety_stock,2))
+    ##col1.metric("Reorder Point (ROP)", round(ROP,2))
 
     col2.metric("Total Annual Cost", round(total_cost,2))
 
