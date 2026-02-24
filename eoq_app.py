@@ -25,6 +25,7 @@ model = st.sidebar.selectbox(
     ["EOQ (Deterministic)",
      "EOQ with Safety Stock",
      "EOQ with Stock Out",
+     "EOQ with Back Order",
      "Newsvendor Model"]
 )
 
@@ -120,11 +121,9 @@ elif model == "EOQ with Stock Out":
     S = st.sidebar.number_input("Ordering Cost per Order (S)", value=1200)
     C = st.sidebar.number_input("Unit Cost (C)", value=500)
     h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
-    #g = st.sidebar.number_input("Expected Shortage per cycle (g)", value=80)
     pi = st.sidebar.number_input("Stock Out Cost per cycle (g)", value=250)
 
     lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
-###########    mean_demand = st.sidebar.number_input("Mean Demand per Period", value=460)
     std_dev = st.sidebar.number_input("Std Dev of Demand", value=120)
 
     service_level = st.sidebar.selectbox(
@@ -152,9 +151,58 @@ elif model == "EOQ with Stock Out":
 
     col1.metric("EOQ", round(EOQ,2))
     col1.metric("Shortage per cycle", round(g,2))
-    col1.metric("Shortage Cost per cycle, G", round(G,2))
 
     col2.metric("Total Annual Cost", round(total_cost,2))
+    col2.metric("Shortage Cost per cycle, G", round(G,2))
+
+# ============================================================
+# EOQ WITH BACK ORDER
+# ============================================================
+
+elif model == "EOQ with Back Order":
+
+    st.header("EOQ with back Order")
+
+    D = st.sidebar.number_input("Annual Demand (D)", value=24000)
+    S = st.sidebar.number_input("Ordering Cost per Order (S)", value=1200)
+    C = st.sidebar.number_input("Unit Cost (C)", value=500)
+    h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
+    pi = st.sidebar.number_input("Back Order Cost per cycle (π)", value=250)
+
+    #lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
+    #std_dev = st.sidebar.number_input("Std Dev of Demand", value=120)
+
+    service_level = st.sidebar.selectbox(
+        "Service Level",
+        options=list(z_table.keys()),
+        index=3
+    )
+
+    #Z = z_table[service_level]
+    #sigma_LT = std_dev * np.sqrt(lead_time)
+
+    H = h_rate * C
+
+    #phi = norm.pdf(Z)
+    #Phi = norm.cdf(Z)
+    #Ez = phi - Z * (1 - Phi) 
+    #g = sigma_LT * Ez
+        
+    EOQ = (np.sqrt((2 * D * S) / H)) * (np.sqrt((H + pi) / H\pi))
+    B = EOQ * (H/(H+pi))
+    M = EOQ - B
+
+    back_order_cost = (B/2)*((B/EOQ)*pi)
+    total_cost = (D/EOQ)*S + (M/2)*(M/EOQ)*H + (B/2)*((B/EOQ)*pi)
+    
+    col1, col2 = st.columns(2)
+
+    col1.metric("EOQ", round(EOQ,2))
+    col1.metric("Backorder Quantity per cycle, B", round(B,2))
+    col1.metric("Maximum Inventory per cycle, M", round(M,2))
+
+    col2.metric("Total Annual Cost", round(total_cost,2))
+    col2.metric("Backorder Cost per cycle, G", round(back_order_cost,2))
 
 # ============================================================
 # NEWSVENDOR MODEL
