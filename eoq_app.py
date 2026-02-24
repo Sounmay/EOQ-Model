@@ -120,7 +120,7 @@ elif model == "EOQ with Stock Out":
     S = st.sidebar.number_input("Ordering Cost per Order (S)", value=1200)
     C = st.sidebar.number_input("Unit Cost (C)", value=500)
     h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
-    g = st.sidebar.number_input("Expected Shortage per cycle (g) /n () if unknown", value=80)
+    #g = st.sidebar.number_input("Expected Shortage per cycle (g)", value=80)
     pi = st.sidebar.number_input("Stock Out Cost per cycle (g)", value=250)
 
     lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
@@ -138,11 +138,10 @@ elif model == "EOQ with Stock Out":
 
     H = h_rate * C
 
-    if g == 0:
-        phi = norm.pdf(z)
-        Phi = norm.cdf(z)
-        Ez = phi - z * (1 - Phi) 
-        g = sigma_LT * Ez
+    phi = norm.pdf(z)
+    Phi = norm.cdf(z)
+    Ez = phi - z * (1 - Phi) 
+    g = sigma_LT * Ez
         
     EOQ = np.sqrt((2 * D * (S+g*pi)) / H)
    
