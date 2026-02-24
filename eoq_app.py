@@ -169,25 +169,13 @@ elif model == "EOQ with Back Order":
     h_rate = st.sidebar.number_input("Holding Cost Rate (%)", value=18)/100
     pi = st.sidebar.number_input("Back Order Cost per cycle (π)", value=250)
 
-    #lead_time = st.sidebar.number_input("Lead Time (periods)", value=2)
-    #std_dev = st.sidebar.number_input("Std Dev of Demand", value=120)
-
     service_level = st.sidebar.selectbox(
         "Service Level",
         options=list(z_table.keys()),
         index=3
     )
 
-    #Z = z_table[service_level]
-    #sigma_LT = std_dev * np.sqrt(lead_time)
-
-    H = h_rate * C
-
-    #phi = norm.pdf(Z)
-    #Phi = norm.cdf(Z)
-    #Ez = phi - Z * (1 - Phi) 
-    #g = sigma_LT * Ez
-        
+    H = h_rate * C  
     EOQ = (np.sqrt((2 * D * S) / H)) * (np.sqrt((H + pi) / pi))
     B = EOQ * (H/(H+pi))
     M = EOQ - B
