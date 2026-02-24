@@ -138,9 +138,9 @@ elif model == "EOQ with Stock Out":
 
     H = h_rate * C
 
-    phi = norm.pdf(z)
-    Phi = norm.cdf(z)
-    Ez = phi - z * (1 - Phi) 
+    phi = norm.pdf(Z)
+    Phi = norm.cdf(Z)
+    Ez = phi - Z * (1 - Phi) 
     g = sigma_LT * Ez
         
     EOQ = np.sqrt((2 * D * (S+g*pi)) / H)
