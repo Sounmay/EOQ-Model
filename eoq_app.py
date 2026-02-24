@@ -155,20 +155,6 @@ elif model == "EOQ with Stock Out":
     col2.metric("Total Annual Cost", round(total_cost,2))
     col2.metric("Shortage Cost per cycle, G", round(G,2))
 
-    st.subheader("Total Cost Curve")
-
-    Q = np.linspace(EOQ*0.2, EOQ*2, 100)
-    TC = (D/EOQ)*S + (EOQ/2)*H + (D/EOQ)*g*pi
-
-    fig, ax = plt.subplots()
-    ax.plot(Q, TC)
-    ax.axvline(EOQ, linestyle="--")
-    ax.set_xlabel("Order Quantity")
-    ax.set_ylabel("Total Cost")
-    ax.set_title("Total Cost vs Order Quantity")
-
-    st.pyplot(fig)
-
 # ============================================================
 # EOQ WITH BACK ORDER
 # ============================================================
