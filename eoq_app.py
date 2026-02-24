@@ -111,7 +111,7 @@ elif model == "EOQ with Safety Stock":
 # EOQ WITH STOCK OUT
 # ============================================================
 
- elif model == "EOQ with Stock outk":
+elif model == "EOQ with Stock outk":
 
     st.header("EOQ with Stock Out")
 
