@@ -5,7 +5,7 @@ from scipy.stats import norm
 
 st.set_page_config(page_title="Inventory Order Quantity Optimisation Toolkit", layout="wide")
 
-st.title("📦 Inventory Optimization Toolkit")
+st.title("📦 Inventory Order Quantity Optimisation Toolkit")
 st.markdown("Built for Supply Chain Analytics")
 
 # ---- Z VALUE TABLE ----
