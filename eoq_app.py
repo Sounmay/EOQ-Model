@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
-st.set_page_config(page_title="Inventory Optimization Toolkit", layout="wide")
+st.set_page_config(page_title="Inventory Order Quantity Optimisation Toolkit", layout="wide")
 
 st.title("📦 Inventory Optimization Toolkit")
 st.markdown("Built for Supply Chain Analytics")
